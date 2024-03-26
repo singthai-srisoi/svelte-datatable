@@ -11,6 +11,9 @@
         values = [...new Set(values)]
         return {key, values}
     })
+    let pane_filter = search_pane.map(key => {
+        return {key: key.key, values: []}
+    })
 
     let handle_search = (e) => {
         let search = e.target.value.toLowerCase()
@@ -28,13 +31,25 @@
         let key = e.target.dataset.key
         // get value in list
         let value = Array.from(e.target.selectedOptions).map(option => option.value)
-        let values = value.join('')
-        if (!value || values.length === 0) {
+        pane_filter = pane_filter.map(filter => {
+            if (filter.key === key) {
+                filter.values = value
+            }
+            return filter
+        })
+        if (!value || value.length === 0) {
             data = default_data
             return
         }
         let filtered_data = default_data.filter(row => {
-            return values.includes(row[key])
+            let check_each_key = pane_filter.map(filter => {
+                // console.log(row[filter.key], filter.values, filter.values.indexOf(String(row[filter.key])) !== -1)
+                if (filter.values.length === 0) {
+                    return false
+                }
+                return filter.values.indexOf(String(row[filter.key])) !== -1
+            })
+            return check_each_key.some(v => v === true)
         })
         data = filtered_data
         
