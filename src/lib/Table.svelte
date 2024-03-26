@@ -57,6 +57,20 @@
         data = filtered_data
         
     }
+
+    let handle_clear_pane = (e) => {
+        pane_filter = pane_filter.map(filter => {
+            filter.values = []
+            return filter
+        })
+        data = default_data
+        e.target.previousElementSibling.querySelectorAll('select').forEach(select => {
+            select.value = ''
+            select.querySelectorAll('option').forEach(option => {
+                option.selected = false
+            })
+        })
+    }
     
     // paginnation stuff
     let page_size = 5,
@@ -70,26 +84,27 @@
         if (current_page > total_pages) {
             current_page = 1
         }
-    }
-
-    
+    }   
 
 </script>
+<details>
+    <summary>Search Panes</summary>
+    <div id="seacrch-pane">
+        {#each search_pane as keys}
+        <div>
+            <label for={keys.key}>{keys.key}</label>
+            <select name={keys.key} data-key={keys.key} multiple on:change={handle_select}>
+                <option value="*">All</option>
+                {#each keys.values as value}
+                <option value={value}>{value}</option>
+                {/each}
+            </select>            
+        </div>        
+        {/each}
+        <button on:click={handle_clear_pane}>clear</button>
+    </div>
+</details>
 
-<div id="seacrch-pane">
-    {#each search_pane as keys}
-    <div>
-        <label for={keys.key}>{keys.key}</label>
-        <select name={keys.key} data-key={keys.key} multiple on:change={handle_select}>
-            <option value="*">All</option>
-            {#each keys.values as value}
-            <option value={value}>{value}</option>
-            {/each}
-        </select>
-        <button>clear</button>
-    </div>        
-    {/each}
-</div>
 <div>
     <input type="text" name="search" placeholder="search" on:input={handle_search}/>
 </div>
