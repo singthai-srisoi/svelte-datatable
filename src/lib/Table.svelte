@@ -47,6 +47,9 @@
                 if (filter.values.length === 0) {
                     return false
                 }
+                if (filter.values.indexOf('*') !== -1) {
+                    return true
+                }
                 return filter.values.indexOf(String(row[filter.key])) !== -1
             })
             return check_each_key.some(v => v === true)
@@ -78,7 +81,7 @@
     <div>
         <label for={keys.key}>{keys.key}</label>
         <select name={keys.key} data-key={keys.key} multiple on:change={handle_select}>
-            <option value="">All</option>
+            <option value="*">All</option>
             {#each keys.values as value}
             <option value={value}>{value}</option>
             {/each}
